@@ -54,3 +54,19 @@ function scanqr_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function scanqr_views_data_alter(array &$data) {
+  // Register a Global filter so it appears in all Views.
+  $data['views']['scanqr_flexible'] = [
+    'title' => t('QR Scanner (configurable)'),
+    'help' => t('Exposed filter that scans a QR and filters by a chosen table/field.'),
+    'filter' => [
+      'id' => 'scanqr_flexible',
+      'allow empty' => TRUE,
+    ],
+    'group' => t('Global'),
+  ];
+}

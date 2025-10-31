@@ -35,3 +35,11 @@ qr-scanner-webform:
     - core/jquery
     - core/drupal
     - core/once
+
+scanqr.views:
+  version: 1.x
+  js:
+    js/qr-scanner-views.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
