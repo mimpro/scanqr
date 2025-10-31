@@ -31,9 +31,12 @@
 
         function openScannerModal() {
           // Create and open Drupal dialog
+          var dialogOptions = $button.data('dialog-options') || {};
+          var dialogWidth = dialogOptions.width || 500;
+          
           var $dialog = Drupal.dialog($modal.clone(), {
             title: Drupal.t('Scan QR Code'),
-            width: parseInt($button.data('dialog-options') ? JSON.parse($button.data('dialog-options')).width : 500),
+            width: dialogWidth,
             dialogClass: 'scanqr-block-dialog',
             buttons: [{
               text: Drupal.t('Close'),
