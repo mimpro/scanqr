@@ -91,10 +91,18 @@
               $dialogStatus.text(Drupal.t('Scanner active - point camera at QR code'));
 
               function tick() {
-                if (!scanning || !$dialogVideo.readyState === $dialogVideo.HAVE_ENOUGH_DATA) {
-                  if (scanning) {
-                    animationId = requestAnimationFrame(tick);
-                  }
+                if (!scanning) {
+                  return;
+                }
+                
+                if ($dialogVideo.readyState !== $dialogVideo.HAVE_ENOUGH_DATA) {
+                  animationId = requestAnimationFrame(tick);
+                  return;
+                }
+                
+                // Check if video has valid dimensions
+                if ($dialogVideo.videoWidth === 0 || $dialogVideo.videoHeight === 0) {
+                  animationId = requestAnimationFrame(tick);
                   return;
                 }
 
