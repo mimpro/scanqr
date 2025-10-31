@@ -21,6 +21,8 @@
         var autoClose = $config.data('auto-close') === '1' || $config.data('auto-close') === 1;
         var autoCloseDelay = parseInt($config.data('auto-close-delay')) || 3;
         var allowExternalRedirect = $config.data('allow-external-redirect') === '1' || $config.data('allow-external-redirect') === 1;
+        var enableSound = $config.data('enable-sound') === '1' || $config.data('enable-sound') === 1;
+        var soundType = $config.data('sound-type') || 'beep';
         
         var stream = null;
         var scanning = false;
@@ -159,31 +161,88 @@
           return /^(https?:\/\/|\/)/i.test(value);
         }
 
-        function playBeep() {
+        function playBeep(soundType) {
           try {
             var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            var oscillator = audioContext.createOscillator();
             var gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
+            gainNode.gain.value = 0.3; // Volume
             
-            // Set beep properties
-            oscillator.frequency.value = 800; // Frequency in Hz
-            oscillator.type = 'sine';
-            
-            // Set volume
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            // Play beep
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.2);
-            
-            // Close audio context after beep completes to free resources
-            oscillator.onended = function() {
-              audioContext.close();
-            };
+            switch(soundType) {
+              case 'beep-low':
+                // Low frequency beep
+                var oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 300;
+                oscillator.connect(gainNode);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                oscillator.onended = function() {
+                  audioContext.close();
+                };
+                break;
+                
+              case 'success':
+                // Rising tone
+                var oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(900, audioContext.currentTime + 0.15);
+                oscillator.connect(gainNode);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.15);
+                oscillator.onended = function() {
+                  audioContext.close();
+                };
+                break;
+                
+              case 'notification':
+                // Two-tone sequence
+                var oscillator1 = audioContext.createOscillator();
+                oscillator1.type = 'sine';
+                oscillator1.frequency.value = 800;
+                oscillator1.connect(gainNode);
+                oscillator1.start();
+                oscillator1.stop(audioContext.currentTime + 0.1);
+                
+                var oscillator2 = audioContext.createOscillator();
+                oscillator2.type = 'sine';
+                oscillator2.frequency.value = 1000;
+                oscillator2.connect(gainNode);
+                oscillator2.start(audioContext.currentTime + 0.12);
+                oscillator2.stop(audioContext.currentTime + 0.22);
+                oscillator2.onended = function() {
+                  audioContext.close();
+                };
+                break;
+                
+              case 'retro':
+                // 8-bit style square wave
+                var oscillator = audioContext.createOscillator();
+                oscillator.type = 'square';
+                oscillator.frequency.value = 800;
+                oscillator.connect(gainNode);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                oscillator.onended = function() {
+                  audioContext.close();
+                };
+                break;
+                
+              case 'beep':
+              default:
+                // Standard beep
+                var oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 800;
+                oscillator.connect(gainNode);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                oscillator.onended = function() {
+                  audioContext.close();
+                };
+                break;
+            }
           }
           catch (e) {
             // Audio API not supported, silently fail
@@ -194,8 +253,10 @@
         function handleScan(scannedValue, $dialogResult, $dialogResultMsg, $dialogStatus) {
           stopScanning();
           
-          // Play beep sound on successful scan
-          playBeep();
+          // Play beep sound on successful scan if enabled
+          if (enableSound) {
+            playBeep(soundType);
+          }
           
           $dialogStatus.html('<span class="success">' + Drupal.t('QR Code detected!') + '</span>');
           

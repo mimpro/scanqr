@@ -31,6 +31,8 @@ class ScanQRBlock extends BlockBase {
       'auto_close' => TRUE,
       'auto_close_delay' => 3,
       'allow_external_redirect' => FALSE,
+      'enable_sound' => TRUE,
+      'sound_type' => 'beep',
     ] + parent::defaultConfiguration();
   }
 
@@ -136,6 +138,32 @@ class ScanQRBlock extends BlockBase {
       ],
     ];
 
+    $form['enable_sound'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable sound notification'),
+      '#default_value' => $config['enable_sound'],
+      '#description' => $this->t('Play a sound when QR code is detected.'),
+    ];
+
+    $form['sound_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Sound type'),
+      '#default_value' => $config['sound_type'],
+      '#options' => [
+        'beep' => $this->t('Beep (High pitch)'),
+        'beep-low' => $this->t('Beep (Low pitch)'),
+        'success' => $this->t('Success (Rising tone)'),
+        'notification' => $this->t('Notification (Two-tone)'),
+        'retro' => $this->t('Retro (8-bit style)'),
+      ],
+      '#description' => $this->t('Choose the sound to play when a QR code is detected.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[enable_sound]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return $form;
   }
 
@@ -153,6 +181,8 @@ class ScanQRBlock extends BlockBase {
     $this->configuration['auto_close'] = $form_state->getValue('auto_close');
     $this->configuration['auto_close_delay'] = $form_state->getValue('auto_close_delay');
     $this->configuration['allow_external_redirect'] = $form_state->getValue('allow_external_redirect');
+    $this->configuration['enable_sound'] = $form_state->getValue('enable_sound');
+    $this->configuration['sound_type'] = $form_state->getValue('sound_type');
   }
 
   /**
@@ -172,6 +202,8 @@ class ScanQRBlock extends BlockBase {
       '#auto_close' => $config['auto_close'],
       '#auto_close_delay' => $config['auto_close_delay'],
       '#allow_external_redirect' => $config['allow_external_redirect'],
+      '#enable_sound' => $config['enable_sound'],
+      '#sound_type' => $config['sound_type'],
       '#attached' => [
         'library' => [
           'scanqr/qr-scanner-block',
