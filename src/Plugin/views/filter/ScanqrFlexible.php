@@ -90,10 +90,12 @@ class ScanqrFlexible extends FilterPluginBase {
       ?? $form_state->getValue('target_table')
       ?? $this->options['target_table']
       ?? $base_table;
+    
     $field_options = [];
     if ($selected_table) {
+      // Attempt 1: Use Views data service to get filterable/field columns.
       $data = Views::viewsData()->get($selected_table);
-      if (is_array($data)) {
+      if (is_array($data) && !empty($data)) {
         foreach ($data as $column => $definition) {
           // Skip meta entries.
           if ($column === 'table') {
@@ -105,8 +107,10 @@ class ScanqrFlexible extends FilterPluginBase {
           }
         }
       }
-      // Fallback: if still empty, try to list columns from field handlers bound to this table.
-      if (empty($field_options) && !empty($field_handlers)) {
+      
+      // Attempt 2 (fallback): list columns from field handlers on this display.
+      if (empty($field_options) && !empty($this->view->display_handler)) {
+        $field_handlers = $this->view->display_handler->getHandlers('field');
         foreach ($field_handlers as $id => $fh) {
           if (!empty($fh->table) && $fh->table === $selected_table && !empty($fh->field)) {
             $label = $fh->adminLabel() ?: $fh->field;
@@ -114,6 +118,22 @@ class ScanqrFlexible extends FilterPluginBase {
           }
         }
       }
+      
+      // Attempt 3 (final fallback): for node_field_data, list common columns.
+      if (empty($field_options) && $selected_table === 'node_field_data') {
+        $field_options = [
+          'nid' => $this->t('Node ID (nid)'),
+          'vid' => $this->t('Revision ID (vid)'),
+          'type' => $this->t('Content type (type)'),
+          'langcode' => $this->t('Language (langcode)'),
+          'title' => $this->t('Title (title)'),
+          'uid' => $this->t('Author UID (uid)'),
+          'status' => $this->t('Published (status)'),
+          'created' => $this->t('Created timestamp (created)'),
+          'changed' => $this->t('Changed timestamp (changed)'),
+        ];
+      }
+      
       asort($field_options);
     }
 
