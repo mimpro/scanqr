@@ -5,6 +5,7 @@ namespace Drupal\scanqr\Plugin\views\filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Drupal\Core\Database\Database;
 
 /**
  * Configurable QR Scanner filter.
@@ -132,6 +133,38 @@ class ScanqrFlexible extends FilterPluginBase {
             $field_options[$fh->field] = $label . ' (' . $fh->field . ')';
           }
         }
+      }
+      
+      // Attempt 3 (fully dynamic): Query the database schema directly to get
+      // ALL columns from the selected table. This works for any table including
+      // custom field tables like node__field_sku.
+      try {
+        $connection = Database::getConnection();
+        $schema = $connection->schema();
+        if ($schema->tableExists($selected_table)) {
+          $table_fields = $schema->findTables($selected_table);
+          if (!empty($table_fields)) {
+            // Get column info for this specific table.
+            $columns = $connection->query("DESCRIBE {" . $selected_table . "}")->fetchAll();
+            foreach ($columns as $column_info) {
+              $column_name = $column_info->Field;
+              // Add any columns not already in the list.
+              if (!isset($field_options[$column_name])) {
+                $field_options[$column_name] = $this->t('@col (@type)', [
+                  '@col' => $column_name,
+                  '@type' => $column_info->Type,
+                ]);
+              }
+            }
+          }
+        }
+      }
+      catch (\Exception $e) {
+        // If schema query fails, we still have the baseline hardcoded options.
+        \Drupal::logger('scanqr')->warning('Failed to query table schema for @table: @error', [
+          '@table' => $selected_table,
+          '@error' => $e->getMessage(),
+        ]);
       }
     }
     
