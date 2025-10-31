@@ -179,6 +179,11 @@
             // Play beep
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.2);
+            
+            // Close audio context after beep completes to free resources
+            oscillator.onended = function() {
+              audioContext.close();
+            };
           }
           catch (e) {
             // Audio API not supported, silently fail
