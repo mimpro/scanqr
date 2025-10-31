@@ -73,7 +73,7 @@
             return;
           }
 
-          var canvasContext = $dialogCanvas.getContext('2d');
+          var canvasContext = $dialogCanvas.getContext('2d', { willReadFrequently: true });
           var constraints = {
             video: {
               facingMode: 'environment',
