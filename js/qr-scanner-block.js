@@ -159,8 +159,39 @@
           return /^(https?:\/\/|\/)/i.test(value);
         }
 
+        function playBeep() {
+          try {
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var oscillator = audioContext.createOscillator();
+            var gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Set beep properties
+            oscillator.frequency.value = 800; // Frequency in Hz
+            oscillator.type = 'sine';
+            
+            // Set volume
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            // Play beep
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+          }
+          catch (e) {
+            // Audio API not supported, silently fail
+            console.log('Audio notification not supported');
+          }
+        }
+
         function handleScan(scannedValue, $dialogResult, $dialogResultMsg, $dialogStatus) {
           stopScanning();
+          
+          // Play beep sound on successful scan
+          playBeep();
+          
           $dialogStatus.html('<span class="success">' + Drupal.t('QR Code detected!') + '</span>');
           
           // Check if scanned value is a URL and handle auto-redirect
