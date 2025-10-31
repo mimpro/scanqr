@@ -1,10 +1,11 @@
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings, once) {
   'use strict';
 
   Drupal.behaviors.scanqrBlock = {
     attach: function (context, settings) {
-      $('.scanqr-block-trigger', context).once('scanqr-block').each(function () {
-        var $button = $(this);
+      var buttons = once('scanqr-block', '.scanqr-block-trigger', context);
+      buttons.forEach(function (button) {
+        var $button = $(button);
         var $wrapper = $button.closest('.scanqr-block-wrapper');
         var $modal = $wrapper.find('#scanqr-block-modal');
         var $video = $('#scanqr-block-video');
@@ -155,4 +156,4 @@
     }
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);
