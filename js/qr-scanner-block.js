@@ -163,7 +163,9 @@
 
         function playBeep(soundType) {
           try {
+            console.log('playBeep called with type:', soundType);
             var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            console.log('AudioContext created:', audioContext);
             var gainNode = audioContext.createGain();
             gainNode.connect(audioContext.destination);
             gainNode.gain.value = 0.3; // Volume
@@ -246,7 +248,7 @@
           }
           catch (e) {
             // Audio API not supported, silently fail
-            console.log('Audio notification not supported');
+            console.error('Audio notification error:', e);
           }
         }
 
@@ -254,7 +256,9 @@
           stopScanning();
           
           // Play beep sound on successful scan if enabled
+          console.log('Sound enabled:', enableSound, 'Sound type:', soundType);
           if (enableSound) {
+            console.log('Attempting to play sound...');
             playBeep(soundType);
           }
           
