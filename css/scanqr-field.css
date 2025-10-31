@@ -1,0 +1,226 @@
+.scanqr-field-widget {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+.scanqr-scanner-container {
+  text-align: center;
+  margin-bottom: 15px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .scanqr-scanner-container {
+    min-height: 250px;
+    margin: 10px -15px 15px -15px; /* Full width on mobile */
+    border-radius: 0;
+  }
+  
+  .scanqr-field-widget {
+    margin: 0 -10px;
+    border-radius: 0;
+  }
+}
+
+.scanqr-scanner-container video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.scanqr-controls {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.scanqr-controls button {
+  background-color: #007cba;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  min-height: 44px; /* iOS minimum touch target */
+  min-width: 120px;
+}
+
+/* Mobile button optimizations */
+@media (max-width: 768px) {
+  .scanqr-controls button {
+    padding: 15px 30px;
+    font-size: 18px;
+    margin: 5px;
+    min-height: 48px; /* Better mobile touch target */
+    width: calc(50% - 10px);
+    max-width: 200px;
+  }
+  
+  .scanqr-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+.scanqr-controls button:hover {
+  background-color: #005a87;
+}
+
+.scanqr-controls button.hidden {
+  display: none;
+}
+
+.btn-stop-scanner {
+  background-color: #dc3545 !important;
+}
+
+.btn-stop-scanner:hover {
+  background-color: #c82333 !important;
+}
+
+.scanqr-status {
+  text-align: center;
+  margin: 10px 0;
+  min-height: 25px;
+}
+
+.scanqr-loading {
+  color: #007cba;
+  font-style: italic;
+  animation: pulse 1.5s infinite;
+}
+
+.scanqr-active {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.scanqr-success {
+  color: #28a745;
+  font-weight: bold;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.scanqr-error {
+  color: #dc3545;
+  font-weight: bold;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.scanqr-stopped {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.scanqr-content-field {
+  width: 100% !important;
+  font-family: monospace;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+}
+
+.scanqr-content-field:read-only {
+  background-color: #e9ecef;
+}
+
+/* Formatter styles */
+.scanqr-formatter {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.scanqr-content {
+  margin-bottom: 15px;
+}
+
+.scanqr-content a {
+  word-break: break-all;
+  color: #007cba;
+  text-decoration: none;
+}
+
+.scanqr-content a:hover {
+  text-decoration: underline;
+}
+
+.qr-content-text {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 4px solid #007cba;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.scanqr-generated-code {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.scanqr-generated-code svg {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.scanqr-timestamp {
+  font-size: 0.9em;
+  color: #6c757d;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Webform specific styles */
+.scanqr-webform-scanner {
+  border: 2px dashed #007cba;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.scanqr-webform-scanner .scanqr-scanner-container {
+  background-color: #000;
+  min-height: 250px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.js-webform-scanqr {
+  margin-top: 10px !important;
+}

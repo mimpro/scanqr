@@ -1,0 +1,25 @@
+scanqr.scanner:
+  path: '/scanqr'
+  defaults:
+    _controller: '\Drupal\scanqr\Controller\ScanQRController::scanner'
+    _title: 'QR Code Scanner'
+  requirements:
+    _permission: 'access scanqr scanner'
+
+scanqr.test:
+  path: '/scanqr/test'
+  defaults:
+    _form: '\Drupal\scanqr\Form\TestScanQRForm'
+    _title: 'Test QR Scanner Element'
+  requirements:
+    _permission: 'access scanqr scanner'
+
+scanqr.settings:
+  path: '/admin/config/system/scanqr'
+  defaults:
+    _form: '\Drupal\scanqr\Form\ScanQRSettingsForm'
+    _title: 'Scan QR Settings'
+  requirements:
+    _permission: 'administer scanqr'
+  options:
+    _admin_route: TRUE

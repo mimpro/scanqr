@@ -1,0 +1,37 @@
+qr-scanner:
+  version: 1.x
+  js:
+    js/qr-scanner.js: {}
+  css:
+    theme:
+      css/scanqr.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+
+qr-scanner-field:
+  version: 1.x
+  js:
+    https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js: { type: external, minified: true }
+    js/qr-scanner-field.js: {}
+  css:
+    theme:
+      css/scanqr-field.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+
+qr-scanner-webform:
+  version: 1.x
+  js:
+    https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js: { type: external, minified: true }
+    js/qr-scanner-webform.js: {}
+  css:
+    theme:
+      css/scanqr-field.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once

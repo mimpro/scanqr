@@ -1,0 +1,25 @@
+{
+  "name": "mimpro/scanqr",
+  "description": "Scan QR - Drupal module providing QR code scanning field and Webform element with mobile-optimized camera support.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "mimpro"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "chillerlan/php-qrcode": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\scanqr\\": "src/"
+    }
+  },
+  "extra": {
+    "drupal": {
+      "recommended-project": false
+    }
+  }
+}

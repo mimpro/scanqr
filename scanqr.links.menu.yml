@@ -1,0 +1,6 @@
+scanqr.scanner:
+  title: 'QR Scanner'
+  route_name: scanqr.scanner
+  description: 'Access the QR code scanner'
+  parent: system.admin_content
+  weight: 10

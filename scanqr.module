@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Contains scanqr.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function scanqr_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the scanqr module.
+    case 'help.page.scanqr':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Scan QR module provides QR code scanning functionality for your Drupal site with full mobile device support.') . '</p>';
+      
+      $output .= '<h3>' . t('Mobile Requirements') . '</h3>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('HTTPS connection (required for camera access)') . '</li>';
+      $output .= '<li>' . t('Modern mobile browser (iOS Safari 11+, Android Chrome 67+)') . '</li>';
+      $output .= '<li>' . t('Camera permissions granted by user') . '</li>';
+      $output .= '<li>' . t('Recommended: Add viewport meta tag to your theme for optimal mobile experience') . '</li>';
+      $output .= '</ul>';
+      
+      $output .= '<h3>' . t('Supported Devices') . '</h3>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('iPhone (iOS 11+)') . '</li>';
+      $output .= '<li>' . t('Android phones and tablets') . '</li>';
+      $output .= '<li>' . t('iPad and other tablets') . '</li>';
+      $output .= '<li>' . t('Desktop computers with webcam') . '</li>';
+      $output .= '</ul>';
+      
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function scanqr_theme() {
+  return [
+    'scanqr_scanner' => [
+      'variables' => [
+        'scanner_id' => NULL,
+        'width' => 300,
+        'height' => 300,
+      ],
+    ],
+  ];
+}

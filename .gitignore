@@ -1,0 +1,21 @@
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Composer / PHP
+/vendor/
+/composer.lock
+.phpunit.result.cache
+
+# Node (if ever used)
+/node_modules/
+/npm-debug.log*
+/yarn.lock
+
+# Drupal
+/sites/*/files/
+/sites/*/private/
+# Exclude local settings if present
+/sites/*/settings.local.php

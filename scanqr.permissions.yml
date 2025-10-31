@@ -1,0 +1,8 @@
+access scanqr scanner:
+  title: 'Access QR Code Scanner'
+  description: 'Allow users to access the QR code scanner functionality.'
+
+administer scanqr:
+  title: 'Administer Scan QR'
+  description: 'Configure Scan QR module settings.'
+  restrict access: true

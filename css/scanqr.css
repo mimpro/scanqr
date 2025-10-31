@@ -1,0 +1,43 @@
+.scanqr-scanner {
+  border: 2px solid #007cba;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+#qr-scanner-video {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+.scanqr-instructions {
+  margin-bottom: 20px;
+}
+
+.scanqr-instructions h3 {
+  color: #007cba;
+  margin-bottom: 10px;
+}
+
+#qr-result {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+  border-radius: 4px;
+}
+
+.scanqr-error {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.scanqr-loading {
+  color: #007cba;
+  font-style: italic;
+}
