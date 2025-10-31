@@ -30,6 +30,7 @@ class ScanQRBlock extends BlockBase {
       'display_message' => $this->t('Scanned value: @value'),
       'auto_close' => TRUE,
       'auto_close_delay' => 3,
+      'allow_external_redirect' => FALSE,
     ] + parent::defaultConfiguration();
   }
 
@@ -78,6 +79,18 @@ class ScanQRBlock extends BlockBase {
       '#title' => $this->t('Redirect URL pattern'),
       '#default_value' => $config['redirect_url'],
       '#description' => $this->t('Use @value as placeholder for scanned value. Example: /node/@value or /search?q=@value'),
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[action_type]"]' => ['value' => 'redirect'],
+        ],
+      ],
+    ];
+
+    $form['allow_external_redirect'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow external URL redirects'),
+      '#default_value' => $config['allow_external_redirect'],
+      '#description' => $this->t('WARNING: If unchecked (recommended), only URLs from the current domain will be redirected. External URLs will be blocked for security.'),
       '#states' => [
         'visible' => [
           ':input[name="settings[action_type]"]' => ['value' => 'redirect'],
@@ -139,6 +152,7 @@ class ScanQRBlock extends BlockBase {
     $this->configuration['display_message'] = $form_state->getValue('display_message');
     $this->configuration['auto_close'] = $form_state->getValue('auto_close');
     $this->configuration['auto_close_delay'] = $form_state->getValue('auto_close_delay');
+    $this->configuration['allow_external_redirect'] = $form_state->getValue('allow_external_redirect');
   }
 
   /**
@@ -157,6 +171,7 @@ class ScanQRBlock extends BlockBase {
       '#display_message' => $config['display_message'],
       '#auto_close' => $config['auto_close'],
       '#auto_close_delay' => $config['auto_close_delay'],
+      '#allow_external_redirect' => $config['allow_external_redirect'],
       '#attached' => [
         'library' => [
           'scanqr/qr-scanner-block',

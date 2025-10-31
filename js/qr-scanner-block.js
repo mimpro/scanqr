@@ -20,6 +20,7 @@
         var displayMessage = $config.data('display-message');
         var autoClose = $config.data('auto-close') === '1' || $config.data('auto-close') === 1;
         var autoCloseDelay = parseInt($config.data('auto-close-delay')) || 3;
+        var allowExternalRedirect = $config.data('allow-external-redirect') === '1' || $config.data('allow-external-redirect') === 1;
         
         var stream = null;
         var scanning = false;
@@ -133,6 +134,26 @@
             });
         }
 
+        function isInternalUrl(url) {
+          try {
+            // Handle relative URLs (they're always internal)
+            if (!url.match(/^https?:\/\//i)) {
+              return true;
+            }
+            
+            // Parse the URL
+            var urlObj = new URL(url);
+            var currentHost = window.location.hostname;
+            
+            // Check if hostnames match
+            return urlObj.hostname === currentHost;
+          }
+          catch (e) {
+            // If URL parsing fails, treat as external for safety
+            return false;
+          }
+        }
+
         function handleScan(scannedValue, $dialogResult, $dialogResultMsg, $dialogStatus) {
           stopScanning();
           $dialogStatus.html('<span class="success">' + Drupal.t('QR Code detected!') + '</span>');
@@ -140,7 +161,26 @@
           if (actionType === 'redirect' && redirectUrl) {
             // Redirect to URL with scanned value
             var targetUrl = redirectUrl.replace('@value', encodeURIComponent(scannedValue));
-            window.location.href = targetUrl;
+            
+            // Check if the target URL is internal before redirecting (unless external is explicitly allowed)
+            if (allowExternalRedirect || isInternalUrl(targetUrl)) {
+              window.location.href = targetUrl;
+            }
+            else {
+              // External URL detected - show warning instead of redirecting
+              $dialogStatus.html('<span class="error">' + Drupal.t('External URL detected. Redirects are only allowed to internal pages.') + '</span>');
+              $dialogResultMsg.html('<strong>' + Drupal.t('Scanned URL: @url', {'@url': targetUrl}) + '</strong>');
+              $dialogResult.show();
+              
+              // Keep dialog open for external URLs
+              if (autoClose) {
+                setTimeout(function () {
+                  if (currentDialog) {
+                    currentDialog.close();
+                  }
+                }, autoCloseDelay * 1000);
+              }
+            }
           }
           else {
             // Display the scanned value
