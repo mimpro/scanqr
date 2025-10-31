@@ -24,6 +24,10 @@
         var enableSound = $config.data('enable-sound') === '1' || $config.data('enable-sound') === 1;
         var soundType = $config.data('sound-type') || 'beep';
         
+        console.log('Config loaded - enable-sound raw:', $config.data('enable-sound'));
+        console.log('Config loaded - enableSound:', enableSound);
+        console.log('Config loaded - soundType:', soundType);
+        
         var stream = null;
         var scanning = false;
         var animationId = null;
