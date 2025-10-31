@@ -4,6 +4,7 @@ namespace Drupal\scanqr\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Drupal\views\Views;
 
 /**
  * Configurable QR Scanner filter.
@@ -55,7 +56,9 @@ class ScanqrFlexible extends FilterPluginBase {
       }
     }
 
-    // Tables available: base table + relationship tables.
+    // Tables available: base table + relationship tables + tables used by
+    // fields already added to this View (helps expose field tables like
+    // node__field_foo, commerce_product__sku, etc.).
     $tables = [];
     $base_table = $this->view->storage->get('base_table');
     if ($base_table) {
@@ -69,21 +72,40 @@ class ScanqrFlexible extends FilterPluginBase {
         }
       }
     }
+    // Include tables from fields already on the display.
+    if (!empty($this->view->display_handler)) {
+      $field_handlers = $this->view->display_handler->getHandlers('field');
+      foreach ($field_handlers as $fh) {
+        // Handler exposes ->table when applicable.
+        if (!empty($fh->table)) {
+          $tables[$fh->table] = $fh->table;
+        }
+      }
+    }
 
     // Fields for currently selected table.
     $selected_table = $form_state->getValue(['options', 'target_table']) ?? $this->options['target_table'] ?? $base_table;
     $field_options = [];
     if ($selected_table) {
-      $data = views_fetch_data($selected_table);
+      $data = Views::viewsData()->get($selected_table);
       if (is_array($data)) {
         foreach ($data as $column => $definition) {
           // Skip meta entries.
           if ($column === 'table') {
             continue;
           }
-          if (is_array($definition) && (isset($definition['filter']) || isset($definition['field']))) {
+          if (is_array($definition) && (isset($definition['filter']) || isset($definition['field']) || isset($definition['argument']))) {
             $label = $definition['title'] ?? $column;
             $field_options[$column] = $label . " ($column)";
+          }
+        }
+      }
+      // Fallback: if still empty, try to list columns from field handlers bound to this table.
+      if (empty($field_options) && !empty($field_handlers)) {
+        foreach ($field_handlers as $id => $fh) {
+          if (!empty($fh->table) && $fh->table === $selected_table && !empty($fh->field)) {
+            $label = $fh->adminLabel() ?: $fh->field;
+            $field_options[$fh->field] = $label . ' (' . $fh->field . ')';
           }
         }
       }
