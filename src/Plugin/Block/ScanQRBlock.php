@@ -157,11 +157,6 @@ class ScanQRBlock extends BlockBase {
         'retro' => $this->t('Retro (8-bit style)'),
       ],
       '#description' => $this->t('Choose the sound to play when a QR code is detected.'),
-      '#states' => [
-        'visible' => [
-          ':input[name="settings[enable_sound]"]' => ['checked' => TRUE],
-        ],
-      ],
     ];
 
     return $form;
@@ -172,6 +167,11 @@ class ScanQRBlock extends BlockBase {
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     parent::blockSubmit($form, $form_state);
+    
+    // Debug: Log what we're getting from the form
+    \Drupal::logger('scanqr')->notice('enable_sound value: @val', ['@val' => var_export($form_state->getValue('enable_sound'), TRUE)]);
+    \Drupal::logger('scanqr')->notice('sound_type value: @val', ['@val' => var_export($form_state->getValue('sound_type'), TRUE)]);
+    
     $this->configuration['button_text'] = $form_state->getValue('button_text');
     $this->configuration['scanner_width'] = $form_state->getValue('scanner_width');
     $this->configuration['scanner_height'] = $form_state->getValue('scanner_height');

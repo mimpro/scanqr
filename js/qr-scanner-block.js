@@ -21,8 +21,8 @@
         var autoClose = $config.data('auto-close') === '1' || $config.data('auto-close') === 1;
         var autoCloseDelay = parseInt($config.data('auto-close-delay')) || 3;
         var allowExternalRedirect = $config.data('allow-external-redirect') === '1' || $config.data('allow-external-redirect') === 1;
-        var enableSound = $config.data('enable-sound') === '1' || $config.data('enable-sound') === 1;
-        var soundType = $config.data('sound-type') || 'beep';
+        var enableSound = true; // HARDCODED FOR TESTING
+        var soundType = 'beep'; // HARDCODED FOR TESTING
         
         console.log('Config loaded - enable-sound raw:', $config.data('enable-sound'));
         console.log('Config loaded - enableSound:', enableSound);
