@@ -210,6 +210,9 @@ class ScanQRBlock extends BlockBase {
           'core/drupal.dialog.ajax',
         ],
       ],
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 
