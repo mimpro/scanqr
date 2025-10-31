@@ -91,7 +91,22 @@ class ScanqrFlexible extends FilterPluginBase {
       ?? $this->options['target_table']
       ?? $base_table;
     
+    // Start with hardcoded common fields for node_field_data as baseline.
     $field_options = [];
+    if ($selected_table === 'node_field_data') {
+      $field_options = [
+        'nid' => $this->t('Node ID (nid)'),
+        'vid' => $this->t('Revision ID (vid)'),
+        'type' => $this->t('Content type (type)'),
+        'langcode' => $this->t('Language (langcode)'),
+        'title' => $this->t('Title (title)'),
+        'uid' => $this->t('Author UID (uid)'),
+        'status' => $this->t('Published (status)'),
+        'created' => $this->t('Created timestamp (created)'),
+        'changed' => $this->t('Changed timestamp (changed)'),
+      ];
+    }
+    
     if ($selected_table) {
       // Attempt 1: Use Views data service to get filterable/field columns.
       $data = Views::viewsData()->get($selected_table);
@@ -108,8 +123,8 @@ class ScanqrFlexible extends FilterPluginBase {
         }
       }
       
-      // Attempt 2 (fallback): list columns from field handlers on this display.
-      if (empty($field_options) && !empty($this->view->display_handler)) {
+      // Attempt 2 (additional): list columns from field handlers on this display.
+      if (!empty($this->view->display_handler)) {
         $field_handlers = $this->view->display_handler->getHandlers('field');
         foreach ($field_handlers as $id => $fh) {
           if (!empty($fh->table) && $fh->table === $selected_table && !empty($fh->field)) {
@@ -118,22 +133,13 @@ class ScanqrFlexible extends FilterPluginBase {
           }
         }
       }
-      
-      // Attempt 3 (final fallback): for node_field_data, list common columns.
-      if (empty($field_options) && $selected_table === 'node_field_data') {
-        $field_options = [
-          'nid' => $this->t('Node ID (nid)'),
-          'vid' => $this->t('Revision ID (vid)'),
-          'type' => $this->t('Content type (type)'),
-          'langcode' => $this->t('Language (langcode)'),
-          'title' => $this->t('Title (title)'),
-          'uid' => $this->t('Author UID (uid)'),
-          'status' => $this->t('Published (status)'),
-          'created' => $this->t('Created timestamp (created)'),
-          'changed' => $this->t('Changed timestamp (changed)'),
-        ];
-      }
-      
+    }
+    
+    // Final safety: ensure we always have at least one option.
+    if (empty($field_options)) {
+      $field_options = ['_placeholder' => $this->t('- Select table first -')];
+    }
+    else {
       asort($field_options);
     }
 
@@ -157,16 +163,20 @@ class ScanqrFlexible extends FilterPluginBase {
       $field_options[$current_field] = $current_field . ' (saved)';
     }
     
+    // If still somehow empty (shouldn't happen), add a placeholder.
+    if (empty($field_options)) {
+      $field_options = ['_none' => $this->t('- No fields available -')];
+    }
+    
     $form['target_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Target field/column'),
       '#options' => $field_options,
-      '#default_value' => $current_field,
-      '#required' => TRUE,
+      '#default_value' => $current_field ?: key($field_options),
+      '#required' => FALSE,
       '#prefix' => '<div id="scanqr-flexible-field-wrapper">',
       '#suffix' => '</div>',
       '#description' => $this->t('Column to filter by (e.g., nid, field_sku_value).'),
-      '#validated' => TRUE,
     ];
 
     $form['relationship'] = [
