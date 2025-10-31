@@ -83,8 +83,9 @@ class ScanqrFlexible extends FilterPluginBase {
       }
     }
 
-    // Fields for currently selected table.
-    $selected_table = $form_state->getValue(['options', 'target_table']) ?? $this->options['target_table'] ?? $base_table;
+  // Fields for currently selected table. In Views handler option forms,
+  // element values live at the current form level (not under 'options').
+  $selected_table = $form_state->getValue('target_table') ?? $this->options['target_table'] ?? $base_table;
     $field_options = [];
     if ($selected_table) {
       $data = Views::viewsData()->get($selected_table);
@@ -199,7 +200,8 @@ class ScanqrFlexible extends FilterPluginBase {
    * AJAX callback to refresh fields dropdown when table changes.
    */
   public static function optionsAjaxRefresh(array &$form, FormStateInterface $form_state) {
-    return $form['options']['target_field'];
+    // Return the element wrapped with the AJAX wrapper id.
+    return $form['target_field'];
   }
 
   /**
