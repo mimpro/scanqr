@@ -22,6 +22,7 @@
         var stream = null;
         var scanning = false;
         var animationId = null;
+        var currentDialog = null;
 
         // Click handler to open modal
         $button.on('click', function (e) {
@@ -34,7 +35,8 @@
           var dialogOptions = $button.data('dialog-options') || {};
           var dialogWidth = dialogOptions.width || 500;
           
-          var $dialog = Drupal.dialog($modal.clone(), {
+          var $dialogContent = $modal.clone();
+          currentDialog = Drupal.dialog($dialogContent, {
             title: Drupal.t('Scan QR Code'),
             width: dialogWidth,
             dialogClass: 'scanqr-block-dialog',
@@ -43,28 +45,29 @@
               class: 'button',
               click: function () {
                 stopScanning();
-                $dialog.close();
+                currentDialog.close();
               }
             }],
             close: function () {
               stopScanning();
+              currentDialog = null;
             }
           });
           
-          $dialog.showModal();
+          currentDialog.showModal();
           
           // Start scanner automatically after modal opens
           setTimeout(function () {
-            startScanning($dialog);
+            startScanning($dialogContent);
           }, 300);
         }
 
-        function startScanning($dialog) {
-          var $dialogVideo = $dialog.find('#scanqr-block-video')[0];
-          var $dialogCanvas = $dialog.find('#scanqr-block-canvas')[0];
-          var $dialogStatus = $dialog.find('.scanqr-block-status');
-          var $dialogResult = $dialog.find('.scanqr-block-result');
-          var $dialogResultMsg = $dialog.find('.scanqr-block-result-message');
+        function startScanning($dialogContent) {
+          var $dialogVideo = $dialogContent.find('#scanqr-block-video')[0];
+          var $dialogCanvas = $dialogContent.find('#scanqr-block-canvas')[0];
+          var $dialogStatus = $dialogContent.find('.scanqr-block-status');
+          var $dialogResult = $dialogContent.find('.scanqr-block-result');
+          var $dialogResultMsg = $dialogContent.find('.scanqr-block-result-message');
           
           if (!$dialogVideo || !$dialogCanvas) {
             return;
@@ -106,7 +109,7 @@
 
                 if (code && code.data) {
                   // QR code detected!
-                  handleScan(code.data, $dialog, $dialogResult, $dialogResultMsg, $dialogStatus);
+                  handleScan(code.data, $dialogResult, $dialogResultMsg, $dialogStatus);
                   return;
                 }
 
@@ -120,7 +123,7 @@
             });
         }
 
-        function handleScan(scannedValue, $dialog, $dialogResult, $dialogResultMsg, $dialogStatus) {
+        function handleScan(scannedValue, $dialogResult, $dialogResultMsg, $dialogStatus) {
           stopScanning();
           $dialogStatus.html('<span class="success">' + Drupal.t('QR Code detected!') + '</span>');
           
@@ -137,7 +140,9 @@
             
             // Auto-close after 3 seconds
             setTimeout(function () {
-              $dialog.close();
+              if (currentDialog) {
+                currentDialog.close();
+              }
             }, 3000);
           }
         }
