@@ -178,10 +178,10 @@ class ScanQRBlock extends BlockBase {
     $this->configuration['action_type'] = $form_state->getValue('action_type');
     $this->configuration['redirect_url'] = $form_state->getValue('redirect_url');
     $this->configuration['display_message'] = $form_state->getValue('display_message');
-    $this->configuration['auto_close'] = $form_state->getValue('auto_close');
+    $this->configuration['auto_close'] = (bool) $form_state->getValue('auto_close');
     $this->configuration['auto_close_delay'] = $form_state->getValue('auto_close_delay');
-    $this->configuration['allow_external_redirect'] = $form_state->getValue('allow_external_redirect');
-    $this->configuration['enable_sound'] = $form_state->getValue('enable_sound');
+    $this->configuration['allow_external_redirect'] = (bool) $form_state->getValue('allow_external_redirect');
+    $this->configuration['enable_sound'] = (bool) $form_state->getValue('enable_sound');
     $this->configuration['sound_type'] = $form_state->getValue('sound_type');
   }
 
