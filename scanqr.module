@@ -52,6 +52,16 @@ function scanqr_theme() {
         'height' => 300,
       ],
     ],
+    'scanqr_block' => [
+      'variables' => [
+        'button_text' => NULL,
+        'scanner_width' => 400,
+        'scanner_height' => 400,
+        'action_type' => 'display',
+        'redirect_url' => '',
+        'display_message' => '',
+      ],
+    ],
   ];
 }
 

@@ -1,0 +1,25 @@
+<div class="scanqr-block-wrapper">
+  <button type="button" class="scanqr-block-trigger button button--primary" data-dialog-type="modal" data-dialog-options='{"width":{{ scanner_width + 100 }},"height":"auto"}'>
+    {{ button_text }}
+  </button>
+  
+  <div id="scanqr-block-modal" class="scanqr-block-modal" style="display:none;">
+    <div class="scanqr-block-content">
+      <h2>{{ 'Scan QR Code'|t }}</h2>
+      <div class="scanqr-block-scanner-wrapper">
+        <video id="scanqr-block-video" width="{{ scanner_width }}" height="{{ scanner_height }}" autoplay playsinline></video>
+        <canvas id="scanqr-block-canvas" style="display:none;"></canvas>
+      </div>
+      <div class="scanqr-block-result" style="display:none;">
+        <div class="scanqr-block-result-message"></div>
+      </div>
+      <div class="scanqr-block-status"></div>
+    </div>
+  </div>
+  
+  <div class="scanqr-block-config" style="display:none;"
+       data-action-type="{{ action_type }}"
+       data-redirect-url="{{ redirect_url }}"
+       data-display-message="{{ display_message }}">
+  </div>
+</div>

@@ -43,3 +43,16 @@ scanqr.views:
   dependencies:
     - core/jquery
     - core/drupal
+
+qr-scanner-block:
+  version: 1.x
+  js:
+    https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js: { type: external, minified: true }
+    js/qr-scanner-block.js: {}
+  css:
+    theme:
+      css/scanqr-block.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupal.dialog.ajax
