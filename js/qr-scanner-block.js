@@ -18,6 +18,8 @@
         var actionType = $config.data('action-type');
         var redirectUrl = $config.data('redirect-url');
         var displayMessage = $config.data('display-message');
+        var autoClose = $config.data('auto-close') === '1' || $config.data('auto-close') === 1;
+        var autoCloseDelay = parseInt($config.data('auto-close-delay')) || 3;
         
         var stream = null;
         var scanning = false;
@@ -146,12 +148,14 @@
             $dialogResultMsg.html('<strong>' + message + '</strong>');
             $dialogResult.show();
             
-            // Auto-close after 3 seconds
-            setTimeout(function () {
-              if (currentDialog) {
-                currentDialog.close();
-              }
-            }, 3000);
+            // Auto-close after configured delay if enabled
+            if (autoClose) {
+              setTimeout(function () {
+                if (currentDialog) {
+                  currentDialog.close();
+                }
+              }, autoCloseDelay * 1000);
+            }
           }
         }
 

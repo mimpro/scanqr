@@ -28,6 +28,8 @@ class ScanQRBlock extends BlockBase {
       'action_type' => 'display',
       'redirect_url' => '',
       'display_message' => $this->t('Scanned value: @value'),
+      'auto_close' => TRUE,
+      'auto_close_delay' => 3,
     ] + parent::defaultConfiguration();
   }
 
@@ -95,6 +97,32 @@ class ScanQRBlock extends BlockBase {
       ],
     ];
 
+    $form['auto_close'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto-close dialog after scan'),
+      '#default_value' => $config['auto_close'],
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[action_type]"]' => ['value' => 'display'],
+        ],
+      ],
+    ];
+
+    $form['auto_close_delay'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Auto-close delay (seconds)'),
+      '#default_value' => $config['auto_close_delay'],
+      '#min' => 1,
+      '#max' => 30,
+      '#description' => $this->t('How many seconds to wait before auto-closing the dialog.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[action_type]"]' => ['value' => 'display'],
+          ':input[name="settings[auto_close]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return $form;
   }
 
@@ -109,6 +137,8 @@ class ScanQRBlock extends BlockBase {
     $this->configuration['action_type'] = $form_state->getValue('action_type');
     $this->configuration['redirect_url'] = $form_state->getValue('redirect_url');
     $this->configuration['display_message'] = $form_state->getValue('display_message');
+    $this->configuration['auto_close'] = $form_state->getValue('auto_close');
+    $this->configuration['auto_close_delay'] = $form_state->getValue('auto_close_delay');
   }
 
   /**
@@ -125,6 +155,8 @@ class ScanQRBlock extends BlockBase {
       '#action_type' => $config['action_type'],
       '#redirect_url' => $config['redirect_url'],
       '#display_message' => $config['display_message'],
+      '#auto_close' => $config['auto_close'],
+      '#auto_close_delay' => $config['auto_close_delay'],
       '#attached' => [
         'library' => [
           'scanqr/qr-scanner-block',
