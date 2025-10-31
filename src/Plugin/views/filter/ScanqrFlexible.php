@@ -91,24 +91,23 @@ class ScanqrFlexible extends FilterPluginBase {
       ?? $this->options['target_table']
       ?? $base_table;
     
-    // Start with hardcoded common fields for node_field_data as baseline.
-    $field_options = [];
-    if ($selected_table === 'node_field_data') {
-      $field_options = [
-        'nid' => $this->t('Node ID (nid)'),
-        'vid' => $this->t('Revision ID (vid)'),
-        'type' => $this->t('Content type (type)'),
-        'langcode' => $this->t('Language (langcode)'),
-        'title' => $this->t('Title (title)'),
-        'uid' => $this->t('Author UID (uid)'),
-        'status' => $this->t('Published (status)'),
-        'created' => $this->t('Created timestamp (created)'),
-        'changed' => $this->t('Changed timestamp (changed)'),
-      ];
-    }
+    // ALWAYS start with hardcoded common fields for node_field_data.
+    // These will be used/overridden if dynamic discovery works.
+    $field_options = [
+      'nid' => $this->t('Node ID (nid)'),
+      'vid' => $this->t('Revision ID (vid)'),
+      'type' => $this->t('Content type (type)'),
+      'langcode' => $this->t('Language (langcode)'),
+      'title' => $this->t('Title (title)'),
+      'uid' => $this->t('Author UID (uid)'),
+      'status' => $this->t('Published (status)'),
+      'created' => $this->t('Created timestamp (created)'),
+      'changed' => $this->t('Changed timestamp (changed)'),
+    ];
     
     if ($selected_table) {
       // Attempt 1: Use Views data service to get filterable/field columns.
+      // This will ADD TO or OVERRIDE the hardcoded options above.
       $data = Views::viewsData()->get($selected_table);
       if (is_array($data) && !empty($data)) {
         foreach ($data as $column => $definition) {
@@ -124,6 +123,7 @@ class ScanqrFlexible extends FilterPluginBase {
       }
       
       // Attempt 2 (additional): list columns from field handlers on this display.
+      // This will also ADD TO the options.
       if (!empty($this->view->display_handler)) {
         $field_handlers = $this->view->display_handler->getHandlers('field');
         foreach ($field_handlers as $id => $fh) {
@@ -135,13 +135,13 @@ class ScanqrFlexible extends FilterPluginBase {
       }
     }
     
-    // Final safety: ensure we always have at least one option.
+    // We should always have options now from the hardcoded baseline above,
+    // but just in case something went terribly wrong:
     if (empty($field_options)) {
-      $field_options = ['_placeholder' => $this->t('- Select table first -')];
+      $field_options = ['nid' => $this->t('Node ID (nid) - fallback')];
     }
-    else {
-      asort($field_options);
-    }
+    
+    asort($field_options);
 
     $form['target_table'] = [
       '#type' => 'select',
