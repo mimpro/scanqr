@@ -150,15 +150,23 @@ class ScanqrFlexible extends FilterPluginBase {
       '#description' => $this->t('Table containing the field to compare the scanned value against.'),
     ];
 
+    // Ensure the currently saved value is always in the options list
+    // to prevent validation errors on form load.
+    $current_field = $this->options['target_field'] ?? '';
+    if ($current_field && !isset($field_options[$current_field])) {
+      $field_options[$current_field] = $current_field . ' (saved)';
+    }
+    
     $form['target_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Target field/column'),
       '#options' => $field_options,
-      '#default_value' => $this->options['target_field'] ?: '',
+      '#default_value' => $current_field,
       '#required' => TRUE,
       '#prefix' => '<div id="scanqr-flexible-field-wrapper">',
       '#suffix' => '</div>',
       '#description' => $this->t('Column to filter by (e.g., nid, field_sku_value).'),
+      '#validated' => TRUE,
     ];
 
     $form['relationship'] = [
