@@ -154,9 +154,43 @@
           }
         }
 
+        function isUrl(value) {
+          // Check if the value looks like a URL
+          return /^(https?:\/\/|\/)/i.test(value);
+        }
+
         function handleScan(scannedValue, $dialogResult, $dialogResultMsg, $dialogStatus) {
           stopScanning();
           $dialogStatus.html('<span class="success">' + Drupal.t('QR Code detected!') + '</span>');
+          
+          // Check if scanned value is a URL and handle auto-redirect
+          if (isUrl(scannedValue) && isInternalUrl(scannedValue)) {
+            // Auto-redirect to internal URLs
+            window.location.href = scannedValue;
+            return;
+          }
+          
+          // If it's an external URL and external redirects are not allowed, show warning
+          if (isUrl(scannedValue) && !allowExternalRedirect) {
+            $dialogStatus.html('<span class="error">' + Drupal.t('External URL detected. Redirects are only allowed to internal pages.') + '</span>');
+            $dialogResultMsg.html('<strong>' + Drupal.t('Scanned URL: @url', {'@url': scannedValue}) + '</strong>');
+            $dialogResult.show();
+            
+            if (autoClose) {
+              setTimeout(function () {
+                if (currentDialog) {
+                  currentDialog.close();
+                }
+              }, autoCloseDelay * 1000);
+            }
+            return;
+          }
+          
+          // If it's an external URL and external redirects ARE allowed, redirect
+          if (isUrl(scannedValue) && allowExternalRedirect) {
+            window.location.href = scannedValue;
+            return;
+          }
           
           if (actionType === 'redirect' && redirectUrl) {
             // Redirect to URL with scanned value
