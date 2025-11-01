@@ -21,10 +21,18 @@
         var autoClose = $config.data('auto-close') === '1' || $config.data('auto-close') === 1;
         var autoCloseDelay = parseInt($config.data('auto-close-delay')) || 3;
         var allowExternalRedirect = $config.data('allow-external-redirect') === '1' || $config.data('allow-external-redirect') === 1;
-        var enableSound = true; // HARDCODED FOR TESTING
-        var soundType = 'beep'; // HARDCODED FOR TESTING
         
-        console.log('Config loaded - enable-sound raw:', $config.data('enable-sound'));
+        // Get sound settings with fallback to enabled by default
+        var enableSoundRaw = $config.data('enable-sound');
+        var enableSound = enableSoundRaw === '1' || enableSoundRaw === 1 || enableSoundRaw === true;
+        var soundType = $config.data('sound-type') || 'beep';
+        
+        // If enable-sound is undefined/null, default to true
+        if (enableSoundRaw === undefined || enableSoundRaw === null || enableSoundRaw === '') {
+          enableSound = true;
+        }
+        
+        console.log('Config loaded - enable-sound raw:', enableSoundRaw);
         console.log('Config loaded - enableSound:', enableSound);
         console.log('Config loaded - soundType:', soundType);
         
